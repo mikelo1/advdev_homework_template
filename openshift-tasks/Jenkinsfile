@@ -80,29 +80,26 @@ podTemplate(
 
       // Build the OpenShift Image in OpenShift and tag it.
       stage('Build and Tag OpenShift Image') {
-        steps {
-          echo "Building OpenShift container image tasks:${devTag}"
+        echo "Building OpenShift container image tasks:${devTag}"
 
-          // Start Binary Build in OpenShift using the file we just published
-          // The filename is openshift-tasks.war in the 'target' directory of your current
-          // Jenkins workspace
-          script {
-            openshift.withCluster() {
-              openshift.withProject("${devProject}") {
-//                openshift.selector("bc", "tasks").startBuild("--from-file=./target/openshift-tasks.war", "--wait=true")
-                openshift.selector("bc", "tasks").startBuild("--from-file=http://nexus3.${prefix}-cicd.svc.cluster.local:8081/repository/releases/org/jboss/quickstarts/eap/tasks/${version}/tasks-${version}.war")
+        // Start Binary Build in OpenShift using the file we just published
+        script {
+          openshift.withCluster() {
+            openshift.withProject("${devProject}") {
+              // The filename is openshift-tasks.war in the 'target' directory of your current Jenkins workspace
+              // openshift.selector("bc", "tasks").startBuild("--from-file=./target/openshift-tasks.war", "--wait=true")
+              // OR use the file you just published into Nexus
+              openshift.selector("bc", "tasks").startBuild("--from-file=http://nexus3.${prefix}-cicd.svc.cluster.local:8081/repository/releases/org/jboss/quickstarts/eap/tasks/${version}/tasks-${version}.war")
 
-                // Tag the image using the devTag
-                openshift.tag("tasks:latest", "tasks:${devTag}")
-              }
-            }
-          }
-        }
-      }
+              // Tag the image using the devTag
+              openshift.tag("tasks:latest", "tasks:${devTag}")
+            }// end withProject
+          } // end withCluster
+        } // end script
+      } // end stage
 
       // Deploy the built image to the Development Environment.
       stage('Deploy to Dev') {
-        steps {
           echo "Deploy container image to Development Project"
           script {
             // 1. Update the image on the dev deployment config
@@ -140,12 +137,10 @@ podTemplate(
               } // end withProject
             } // end witchCluster
           } // end script
-        } // end steps
       } // end stage
 
       // Copy Image to Nexus container registry
       stage('Copy Image to Nexus container registry') {
-        steps {
           echo "Copy image to Nexus container Registry"
           script {
             // Use skopeo to copy
@@ -158,7 +153,6 @@ podTemplate(
               } // end withProject
             } // end withCluster
           } // end script
-        } // end steps
       } // end stage
 
       // Blue/Green Deployment into Production
@@ -167,7 +161,6 @@ podTemplate(
       def activeApp = ""
 
       stage('Blue/Green Production Deployment') {
-        steps {
           echo "Blue/Green Deployment"
           script {
             // 1. Determine which application is active
@@ -211,11 +204,9 @@ podTemplate(
               } // end withProject
             } // end withCluster
           } // end script
-        } // end steps
       } // end stage
 
       stage('Switch over to new Version') {
-        steps {
           // Stop for approval
           input "Switch Production?"
 
@@ -231,7 +222,6 @@ podTemplate(
               } // end withProject
             } // end withCluster
           } // end script
-        } // end stage
       } // end stage
 
     } // end dir
