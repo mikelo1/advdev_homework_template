@@ -89,10 +89,11 @@ podTemplate(
           script {
             openshift.withCluster() {
               openshift.withProject("${devProject}") {
-                openshift.selector("bc", "tasks").startBuild("--from-file=./target/openshift-tasks.war", "--wait=true")
+//                openshift.selector("bc", "tasks").startBuild("--from-file=./target/openshift-tasks.war", "--wait=true")
+                openshift.selector("bc", "tasks").startBuild("--from-file=http://nexus3.${prefix}-cicd.svc.cluster.local:8081/repository/releases/org/jboss/quickstarts/eap/tasks/${version}/tasks-${version}.war")
 
-              // Tag the image using the devTag
-              openshift.tag("tasks:latest", "tasks:${devTag}")
+                // Tag the image using the devTag
+                openshift.tag("tasks:latest", "tasks:${devTag}")
               }
             }
           }
