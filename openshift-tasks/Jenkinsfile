@@ -127,7 +127,6 @@ podTemplate(
                 //    (rc.spec.replicas) with the running replicas
                 //    (rc.status.readyReplicas)
                 //
-                def dc = openshift.selector("dc", "tasks").object()
                 def dc_version = dc.status.latestVersion
                 def rc = openshift.selector("rc", "tasks-${dc_version}").object()
 
