@@ -119,17 +119,18 @@ podTemplate(
                 def configmap = openshift.create('configmap', 'tasks-config', '--from-file=./configuration/application-users.properties', '--from-file=./configuration/application-roles.properties' )
                 // 3. Reeploy the dev deployment
                 openshift.selector("dc", "tasks").rollout().latest();
+
                 // 4. Wait until the deployment is running and ready before proceeding
                 //    The following code will accomplish that by comparing 
                 //    the requested replicas (rc.spec.replicas) with the running replicas (rc.status.readyReplicas)
                 deploymentconfig = openshift.selector("dc/tasks").object()
                 def dc_version = deploymentconfig.status.latestVersion
-                echo "DC latestVersion: ${dc_version} "
                 def replicacontroller = openshift.selector("rc", "tasks-${dc_version}").object()
                 echo "Waiting for ReplicationController tasks-${dc_version} to be ready"
                 while (replicacontroller.spec.replicas != replicacontroller.status.readyReplicas) {
                   sleep 5
                   replicacontroller = openshift.selector("rc", "tasks-${dc_version}").object()
+                  echo "Replicas: ${replicacontroller.spec.replicas}, readyReplicas: ${replicacontroller.status.readyReplicas}"
                 } // end while
               } // end withProject
             } // end witchCluster
