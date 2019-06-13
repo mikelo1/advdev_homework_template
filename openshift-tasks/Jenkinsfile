@@ -108,6 +108,9 @@ podTemplate(
                 // Update the Image on the Development Deployment Config
                 echo "Update the Image on the Development Deployment Config"
                 def dc = openshift.selector("dc/tasks").object()
+                def dc_version = dc.status.latestVersion
+                echo "DC latestVersion: ${dc_version} "
+
                 // Set Image, Set VERSION
                 echo "Set Image"
                 dc.spec.template.spec.containers[0].image="docker-registry.default.svc:5000/${devProject}/tasks:${devTag}"
@@ -127,7 +130,7 @@ podTemplate(
                 //    (rc.spec.replicas) with the running replicas
                 //    (rc.status.readyReplicas)
                 //
-                def dc_version = dc.status.latestVersion
+                dc_version = dc.status.latestVersion
                 echo "DC latestVersion: ${dc_version} "
                 def rc = openshift.selector("rc", "tasks-${dc_version}").object()
 
