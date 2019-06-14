@@ -112,7 +112,7 @@ podTemplate(
                 //openshift.set("image", "dc/tasks", "tasks=docker-registry.default.svc:5000/${devProject}/tasks:${devTag}")
                 deploymentconfig.spec.template.spec.containers[0].image="docker-registry.default.svc:5000/${devProject}/tasks:${devTag}"
                 deploymentconfig.spec.template.spec.containers[0].env[0].value='${devTag} (tasks-dev)'
-                openshift.apply(dc)
+                openshift.apply(deploymentconfig)
 
                 // 2. Update the config maps with the potentially changed properties files
                 // (just in case the properties files changed in the latest commit)
