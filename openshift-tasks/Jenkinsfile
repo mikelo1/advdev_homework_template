@@ -162,9 +162,10 @@ podTemplate(
       stage('Blue/Green Production Deployment') {
           echo "Blue/Green Deployment"
           script {
-            // 1. Determine which application is active
+            
             openshift.withCluster() {
               openshift.withProject("${prodProject}") {
+                // 1. Determine which application is active
                 activeApp = openshift.selector("route", "tasks").object().spec.to.name
                 if (activeApp == "tasks-green") {
                   destApp = "tasks-blue"
@@ -172,8 +173,7 @@ podTemplate(
                 echo "Active Application:      " + activeApp
                 echo "Destination Application: " + destApp
 
-            // 2. Update the image for the other application
-
+                // 2. Update the image for the other application
                 // Update the Image on the Production Deployment Config
                 def dc_prod = openshift.selector("dc/${destApp}").object()
                 // Set Image, Set VERSION
@@ -185,13 +185,12 @@ podTemplate(
                 openshift.selector("configmap", "${destApp}-config").delete()
                 def configmap = openshift.create("configmap", "${destApp}-config", "--from-file=./configuration/application-users.properties", "--from-file=./configuration/application-roles.properties" )
 
-            // 3. Deploy into the other application
+                // 3. Deploy into the other application
                 // Deploy the inactive application.
                 openshift.selector("dc", "${destApp}").rollout().latest();
-            // 4. Update Config maps for other application
-            // 5. Wait until application is running
+                // 4. Update Config maps for other application
 
-                // Wait for application to be deployed
+                // 5. Wait for application to be deployed
                 dc_prod = openshift.selector("dc", "${destApp}").object()
                 def dc_version = dc_prod.status.latestVersion
                 def rc_prod = openshift.selector("rc", "${destApp}-${dc_version}").object()
@@ -209,7 +208,7 @@ podTemplate(
 
       stage('Switch over to new Version') {
           // Stop for approval
-          input "Switch Production?"
+       //   input "Switch Production?"
 
           echo "Executing production switch"
           // After approval execute the switch
