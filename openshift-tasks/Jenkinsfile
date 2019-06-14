@@ -175,10 +175,11 @@ podTemplate(
             // 2. Update the image for the other application
 
                 // Update the Image on the Production Deployment Config
-                def dc = openshift.selector("dc/${destApp}").object()
+                def dc_prod = openshift.selector("dc/${destApp}").object()
                 // Set Image, Set VERSION
-                dc.spec.template.spec.containers[0].image="docker-registry.default.svc:5000/${devProject}/tasks:${prodTag}"
-                dc.spec.template.spec.containers[0].env[0].value='${prodTag} (${activeApp})'
+                dc_prod.spec.template.spec.containers[0].image="docker-registry.default.svc:5000/${devProject}/tasks:${prodTag}"
+                dc_prod.spec.template.spec.containers[0].env[0].value='${prodTag} (${activeApp})'
+                openshift.apply(dc_prod)
 
                 // Update Config Map in change config files changed in the source
                 openshift.selector("configmap", "${destApp}-config").delete()
@@ -191,7 +192,7 @@ podTemplate(
             // 5. Wait until application is running
 
                 // Wait for application to be deployed
-                def dc_prod = openshift.selector("dc", "${destApp}").object()
+                dc_prod = openshift.selector("dc", "${destApp}").object()
                 def dc_version = dc_prod.status.latestVersion
                 def rc_prod = openshift.selector("rc", "${destApp}-${dc_version}").object()
                 // Make sure the application is running and ready before proceeding
@@ -199,6 +200,7 @@ podTemplate(
                 while (rc_prod.spec.replicas != rc_prod.status.readyReplicas) {
                   sleep 5
                   rc_prod = openshift.selector("rc", "${destApp}-${dc_version}").object()
+                  echo "Replicas: ${rc_prod.spec.replicas}, readyReplicas: ${rc_prod.status.readyReplicas}"
                 } // end while
               } // end withProject
             } // end withCluster
