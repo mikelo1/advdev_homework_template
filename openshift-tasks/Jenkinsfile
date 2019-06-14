@@ -178,7 +178,7 @@ podTemplate(
                 def dc_prod = openshift.selector("dc/${destApp}").object()
                 // Set Image, Set VERSION
                 dc_prod.spec.template.spec.containers[0].image="docker-registry.default.svc:5000/${devProject}/tasks:${prodTag}"
-                dc_prod.spec.template.spec.containers[0].env[0].value='${prodTag} (${activeApp})'
+                dc_prod.spec.template.spec.containers[0].env[0].value='${prodTag} (${destApp})'
                 openshift.apply(dc_prod)
 
                 // Update Config Map in change config files changed in the source
