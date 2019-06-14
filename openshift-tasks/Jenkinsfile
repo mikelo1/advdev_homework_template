@@ -131,6 +131,7 @@ podTemplate(
                 while (replicacontroller.spec.replicas != replicacontroller.status.readyReplicas) {
                   sleep 5
                   replicacontroller = openshift.selector("rc", "tasks-${dc_version}").object()
+                  echo "Replicas: ${replicacontroller.spec.replicas}, readyReplicas: ${replicacontroller.status.readyReplicas}"
                 } // end while
               } // end withProject
             } // end witchCluster
