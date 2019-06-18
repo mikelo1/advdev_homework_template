@@ -225,24 +225,24 @@ podTemplate(
       } // end stage
 
       stage('Wait for applications to be ready') {
-          def devTasksRoute = sh(returnStdout: true, script: "curl tasks-${GUID}-tasks-dev.apps.${cluster}.opentlc.com").trim()
-          def retries = 6
-          
+          def tasksRoute = sh(returnStdout: true, script: "curl tasks-${GUID}-tasks-dev.apps.${cluster}.opentlc.com").trim()
+    //      def retries = 6
+
           echo "Waiting for tasks-dev to be ready"
-          while(!devTasksRoute.contains("tasks-dev") && (retries > 0) ) {
+          while(!tasksRoute.contains("tasks-dev") ) { //&& (retries > 0) ) {
             sleep 5
-            devTasksRoute = sh(returnStdout: true, script: "curl tasks-${GUID}-tasks-dev.apps.${cluster}.opentlc.com").trim()
-            retries--
+            tasksRoute = sh(returnStdout: true, script: "curl tasks-${GUID}-tasks-dev.apps.${cluster}.opentlc.com").trim()
+    //        retries--
           } // end while
 
           // devTasksRoute = sh(returnStdout: true, script: "curl tasks-${GUID}-tasks-${destApp}.apps.${cluster}.opentlc.com").trim()
-          devTasksRoute = sh(returnStdout: true, script: "curl tasks-${GUID}-tasks-prod.apps.${cluster}.opentlc.com").trim()
-          retries = 6
+          tasksRoute = sh(returnStdout: true, script: "curl tasks-${GUID}-tasks-prod.apps.${cluster}.opentlc.com").trim()
+    //      retries = 6
           echo "Waiting for ${destApp} to be ready"
-          while(!devTasksRoute.contains("tasks-${destApp}") && (retries > 0) ) {
+          while(!tasksRoute.contains("tasks-${destApp}") ) { //&& (retries > 0) ) {
             sleep 5
-            devTasksRoute = sh(returnStdout: true, script: "curl tasks-${GUID}-tasks-prod.apps.${cluster}.opentlc.com").trim()
-            retries--
+            tasksRoute = sh(returnStdout: true, script: "curl tasks-${GUID}-tasks-prod.apps.${cluster}.opentlc.com").trim()
+    //        retries--
           } // end while
       } // end stage
 
