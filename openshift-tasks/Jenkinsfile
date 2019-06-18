@@ -210,7 +210,7 @@ podTemplate(
           // Stop for approval
        //   input "Switch Production?"
 
-          echo "Executing production switch"
+          // echo "Executing production switch"
           // After approval execute the switch
           echo "Switching Production application to ${destApp}."
           script {
@@ -224,13 +224,15 @@ podTemplate(
           } // end script
       } // end stage
 
-      stage('Wait for ${destApp} to be ready') {
-          def devTasksRoute = sh(returnStdout: true, script: "curl tasks-${GUID}-tasks-${destApp}.apps.${cluster}.opentlc.com").trim()
+      stage('Wait for application to be ready') {
+//          def devTasksRoute = sh(returnStdout: true, script: "curl tasks-${GUID}-tasks-${destApp}.apps.${cluster}.opentlc.com").trim()
+          def devTasksRoute = sh(returnStdout: true, script: "curl tasks-${GUID}-tasks-prod.apps.${cluster}.opentlc.com").trim()
           def retries = 6
           echo "Waiting for ${destApp} to be ready"
           while(!devTasksRoute.contains("tasks-${destApp}") && (retries > 0) ) {
             sleep 5
-            devTasksRoute = sh(returnStdout: true, script: "curl tasks-${GUID}-${destApp}.apps.${cluster}.opentlc.com").trim()
+//            devTasksRoute = sh(returnStdout: true, script: "curl tasks-${GUID}-${destApp}.apps.${cluster}.opentlc.com").trim()
+            devTasksRoute = sh(returnStdout: true, script: "curl tasks-${GUID}-tasks-prod.apps.${cluster}.opentlc.com").trim()
             retries--
           } // end while
       } // end stage
