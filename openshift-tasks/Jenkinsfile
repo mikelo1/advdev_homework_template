@@ -219,17 +219,20 @@ podTemplate(
                 def route = openshift.selector("route/tasks").object()
                 route.spec.to.name="${destApp}"
                 openshift.apply(route)
-                def devTasksRoute = sh(returnStdout: true, script: "curl tasks-${GUID}-tasks-${destApp}.apps.${cluster}.opentlc.com").trim()
-                def retries = 6
-                echo "Waiting for ${destApp} to be ready"
-                while(!devTasksRoute.contains("tasks-dev") && (retries > 0) ) {
-                  sleep 5
-                  devTasksRoute = sh(returnStdout: true, script: "curl tasks-${GUID}-${destApp}.apps.${cluster}.opentlc.com").trim()
-                  retries--
-                } // end while
               } // end withProject
             } // end withCluster
           } // end script
+      } // end stage
+
+      stage('Wait for ${destApp} to be ready') {
+          def devTasksRoute = sh(returnStdout: true, script: "curl tasks-${GUID}-tasks-${destApp}.apps.${cluster}.opentlc.com").trim()
+          def retries = 6
+          echo "Waiting for ${destApp} to be ready"
+          while(!devTasksRoute.contains("tasks-${destApp}") && (retries > 0) ) {
+            sleep 5
+            devTasksRoute = sh(returnStdout: true, script: "curl tasks-${GUID}-${destApp}.apps.${cluster}.opentlc.com").trim()
+            retries--
+          } // end while
       } // end stage
 
     } // end dir
