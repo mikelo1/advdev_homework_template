@@ -235,12 +235,13 @@ podTemplate(
     //        retries--
           } // end while
 
-          tasksRoute = sh(returnStdout: true, script: "curl tasks-${GUID}-${destApp}.apps.${cluster}.opentlc.com").trim()
+          //tasksRoute = sh(returnStdout: true, script: "curl tasks-${GUID}-${destApp}.apps.${cluster}.opentlc.com").trim()
+          tasksRoute = sh(returnStdout: true, script: "curl tasks-${GUID}-tasks-prod.apps.${cluster}.opentlc.com").trim()
     //      retries = 6
           echo "Waiting for ${destApp} to be ready"
           while(!tasksRoute.contains("tasks-${destApp}") ) { //&& (retries > 0) ) {
             sleep 5
-            tasksRoute = sh(returnStdout: true, script: "curl tasks-${GUID}-${destApp}.apps.${cluster}.opentlc.com").trim()
+            tasksRoute = sh(returnStdout: true, script: "curl tasks-${GUID}-tasks-prod.apps.${cluster}.opentlc.com").trim()
     //        retries--
           } // end while
       } // end stage
