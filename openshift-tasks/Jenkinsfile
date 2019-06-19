@@ -237,7 +237,7 @@ podTemplate(
           } // end while
 
           //tasksRoute = sh(returnStdout: true, script: "curl tasks-${GUID}-${destApp}.apps.${cluster}.opentlc.com").trim()
-          tasksRoute = sh(returnStdout: true, script: "curl -s tasks-${GUID}-tasks-prod.apps.${cluster}.opentlc.com | grep -e '<h1>'' -e 'tasks'").trim()
+          tasksRoute = sh(returnStdout: true, script: "curl -s tasks-${GUID}-tasks-prod.apps.${cluster}.opentlc.com | grep -e '<h1>' -e 'tasks'").trim()
     //      retries = 6
           echo "Waiting for ${destApp} to be ready"
           while(!tasksRoute.contains("tasks-") ) { //&& (retries > 0) ) {
