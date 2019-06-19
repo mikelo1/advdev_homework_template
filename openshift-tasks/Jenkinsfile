@@ -235,7 +235,6 @@ podTemplate(
     //        retries--
           } // end while
 
-          // devTasksRoute = sh(returnStdout: true, script: "curl tasks-${GUID}-tasks-${destApp}.apps.${cluster}.opentlc.com").trim()
           tasksRoute = sh(returnStdout: true, script: "curl tasks-${GUID}-${destApp}.apps.${cluster}.opentlc.com").trim()
     //      retries = 6
           echo "Waiting for ${destApp} to be ready"
