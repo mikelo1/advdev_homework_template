@@ -232,9 +232,9 @@ podTemplate(
           while(!tasksRoute.contains("tasks-dev") ) { //&& (retries > 0) ) {
             sleep 5
             tasksRoute = sh(returnStdout: true, script: "curl -s tasks-${GUID}-tasks-dev.apps.${cluster}.opentlc.com | grep -e '<h1>' -e 'tasks'").trim()
+            echo "Current curl output: ${taskroute}"
     //        retries--
           } // end while
-          echo "Current curl output: ${taskroute}"
 
           //tasksRoute = sh(returnStdout: true, script: "curl tasks-${GUID}-${destApp}.apps.${cluster}.opentlc.com").trim()
           tasksRoute = sh(returnStdout: true, script: "curl -s tasks-${GUID}-tasks-prod.apps.${cluster}.opentlc.com | grep -e '<h1>'' -e 'tasks'").trim()
@@ -244,9 +244,9 @@ podTemplate(
             sleep 5
             echo "Current page header: ${tasksRoute.substring(tasksRoute.indexOf('<h1>',tasksRoute.indexOf('</h1>')))}"
             tasksRoute = sh(returnStdout: true, script: "curl -s tasks-${GUID}-tasks-prod.apps.${cluster}.opentlc.com | grep -e '<h1>' -e 'tasks'").trim()
+            echo "Current curl output: ${taskroute}"
     //        retries--
           } // end while
-          echo "Current curl output: ${taskroute}"
       } // end stage
 
     } // end dir
