@@ -225,25 +225,28 @@ podTemplate(
       } // end stage
 
       stage('Wait for applications to be ready') {
-          def tasksRoute = sh(returnStdout: true, script: "curl tasks-${GUID}-tasks-dev.apps.${cluster}.opentlc.com").trim()
+          def tasksRoute = sh(returnStdout: true, script: "curl -s tasks-${GUID}-tasks-dev.apps.${cluster}.opentlc.com").trim()
     //      def retries = 6
 
           echo "Waiting for tasks-dev to be ready"
           while(!tasksRoute.contains("tasks-dev") ) { //&& (retries > 0) ) {
             sleep 5
-            tasksRoute = sh(returnStdout: true, script: "curl tasks-${GUID}-tasks-dev.apps.${cluster}.opentlc.com").trim()
+            tasksRoute = sh(returnStdout: true, script: "curl -s tasks-${GUID}-tasks-dev.apps.${cluster}.opentlc.com").trim()
     //        retries--
           } // end while
+          echo "Current task: ${tasksRoute.substring(tasksRoute.indexOf('tasks-',10))}"
 
           //tasksRoute = sh(returnStdout: true, script: "curl tasks-${GUID}-${destApp}.apps.${cluster}.opentlc.com").trim()
-          tasksRoute = sh(returnStdout: true, script: "curl tasks-${GUID}-tasks-prod.apps.${cluster}.opentlc.com").trim()
+          tasksRoute = sh(returnStdout: true, script: "curl -s tasks-${GUID}-tasks-prod.apps.${cluster}.opentlc.com").trim()
     //      retries = 6
           echo "Waiting for ${destApp} to be ready"
-          while(!tasksRoute.contains("tasks-${destApp}") ) { //&& (retries > 0) ) {
+          while(!tasksRoute.contains("tasks-") ) { //&& (retries > 0) ) {
             sleep 5
-            tasksRoute = sh(returnStdout: true, script: "curl tasks-${GUID}-tasks-prod.apps.${cluster}.opentlc.com").trim()
+            echo "Current page header: ${tasksRoute.substring(tasksRoute.indexOf('<h1>',tasksRoute.indexOf('</h1>')))}"
+            tasksRoute = sh(returnStdout: true, script: "curl -s tasks-${GUID}-tasks-prod.apps.${cluster}.opentlc.com").trim()
     //        retries--
           } // end while
+          echo "Current task: ${tasksRoute.substring(tasksRoute.indexOf('tasks-',10))}"
       } // end stage
 
     } // end dir
